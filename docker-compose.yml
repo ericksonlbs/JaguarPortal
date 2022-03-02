@@ -1,0 +1,43 @@
+version: "3.9"
+services:  
+  db:    
+    image: mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: MongoDB2022!
+    ports:
+      - "27017:27017"
+    volumes:
+      - db_data:/data/db
+  webapi:
+    depends_on:
+      - db
+    image: ericksonlbs/jaguar-webapi
+    ports:
+      - "8003:443"
+      - "8004:80"
+    environment:
+      MongoDatabaseSettings__ConnectionString: mongodb://root:MongoDB2022!@db:27017/
+      ASPNETCORE_URLS: https://+;http://+
+      ASPNETCORE_HTTPS_PORT: 8003 
+      ASPNETCORE_Kestrel__Certificates__Default__Password: 434170d8-45f1-4045-bfd2-c18f76bee82d
+      ASPNETCORE_Kestrel__Certificates__Default__Path: /https/aspnetapp.pfx
+    volumes:
+      - ${USERPROFILE}\.aspnet\https:/https/
+  web: 
+    depends_on:
+      - webapi
+    image: ericksonlbs/jaguar-web
+    ports:
+      - "8001:443"
+      - "8002:80"
+    environment:
+      BaseUrlAPI: https://webapi/
+      ASPNETCORE_URLS: https://+;http://+
+      ASPNETCORE_HTTPS_PORT: 8001
+      ASPNETCORE_Kestrel__Certificates__Default__Password: 434170d8-45f1-4045-bfd2-c18f76bee82d
+      ASPNETCORE_Kestrel__Certificates__Default__Path: /https/aspnetapp.pfx
+    volumes:
+      - ${USERPROFILE}\.aspnet\https:/https/
+volumes:
+  db_data: {}

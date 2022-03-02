@@ -20,7 +20,7 @@ namespace JaguarWebAPI
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder.UseUrls("https://*:8081", "http://*:8080");
+                    webBuilder.UseUrls("https://*:443", "http://*:80");
                     webBuilder.UseStartup<Startup>();
                 });
     }
