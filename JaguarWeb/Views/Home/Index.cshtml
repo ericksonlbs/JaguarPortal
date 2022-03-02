@@ -1,0 +1,21 @@
+﻿@model List<JaguarWeb.Clients.AnalysisControlFlowModel>
+@{
+    ViewData["Title"] = "Projects";
+}
+
+<h1>Projects</h1>
+
+<table>
+    <tr>
+        <th>Project</th>
+        <th>Last Analyzed</th>
+    </tr>
+    @foreach (var item in Model.GroupBy(x=>x.ProjectID))
+    {
+    <tr>
+        <td><a href="~/Project/@item.Key">@item.Key </a></td>
+        <td><a href="~/Project/@item.Key">@Model.Where(x=>x.ProjectID == item.Key).Max(x=>x.CreatedDate).ToString("MM/dd/yyyy HH:mm")</a></td>
+    </tr>
+    }
+</table>
+

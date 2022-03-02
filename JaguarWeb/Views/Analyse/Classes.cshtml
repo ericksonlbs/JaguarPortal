@@ -1,0 +1,106 @@
+﻿@model JaguarWeb.Clients.AnalysisControlFlowModel
+@{
+    JaguarWeb.Clients.ClassAnalyze myClass = Model.Classes.FirstOrDefault(x=>x.FullName == ViewData["FullName"].ToString());
+    ViewData["Title"] = $"{myClass.FullName}";
+    ViewData["Breadcrumbs"] = new List<KeyValuePair<string,string>>(){
+          new KeyValuePair<string, string>($"Home","Projects"),
+        new KeyValuePair<string, string>($"Project/{Model.ProjectID}",Model.ProjectID),
+        new KeyValuePair<string, string>($"Analyse/{Model.Id}",Model.CreatedDate.ToString("MM/dd/yyyy HH:mm")),
+        new KeyValuePair<string, string>($"Analyse/{Model.Id}/{myClass.FullName}",myClass.FullName),
+        }; 
+}
+
+
+<h1>Class</h1>
+<h2>@myClass.FullName</h2>
+
+<section class="executionConfigs">
+    <p><em>Heuristic: </em>@Model.Heuristic</p>
+    <p><em>Requirement Type: </em>LINE</p>
+    <p><em>Tests: </em>
+        @Model.FailedTests.ToString() failed out of @Model.TotalTests.ToString()
+    </p>
+</section>
+
+<section class="testRequirements">
+    <h3 class="subTitle">Line Color Susp</h3>
+
+    <article class="tableControls">
+        <p>
+            Suspiciouness Filter:
+            <input type="range" min="0.0" max="1.0" step="0.1" value="1.0" id="susRange" list="tickmarks">
+            <datalist id="tickmarks">
+                <option value="0.0"></option>
+                <option value="0.1"></option>
+                <option value="0.2"></option>
+                <option value="0.3"></option>
+                <option value="0.4"></option>
+                <option value="0.5"></option>
+                <option value="0.6"></option>
+                <option value="0.7"></option>
+                <option value="0.8"></option>
+                <option value="0.9"></option>
+                <option value="1.0"></option>
+            </datalist>
+
+            <span id="rangeText"></span>
+
+        </p>
+        <p>
+            <label for="itensPerTable">Itens per table: </label>
+            <select name="itensPerTable" id="itensPerTable">
+                <option value="10" selected>10</option>
+                <option value="20">20</option>
+                <option value="30">30</option>
+                <option value="40">40</option>
+                <option value="all">All</option>
+            </select>
+        </p>
+    </article>
+
+    <article id="tableContainer">
+        <table id="dataTable">
+            <tr>
+                <th class="align-center"><abbr title="line">Line</abbr> </th>
+                <th class="align-center"><abbr title="method">Method Signature</abbr> </th>                
+                <th>Bar</th>
+                <th class="align-center" id="suspColumn"><abbr title="suspiciousness">Susp.</abbr> </th>
+                <th class="align-center">
+                    <abbr title="the number of failed test cases that executed the component">C.E.F</abbr>
+                </th>
+                <th class="align-center" >
+                    <abbr title="the number of passed test cases that executed the component">C.E.P</abbr>
+                </th>
+                <th class="align-center" >
+                    <abbr title="the number of failed test cases that did not execute the component">C.N.F</abbr>
+                </th>
+                <th class="align-center" >
+                    <abbr title="the number of passed test cases that did not execute the component">C.N.P</abbr>
+                </th>
+            </tr>
+
+     
+            @foreach (var line in myClass.Lines)
+            {                
+                <tr>
+                    <td><a href="~/Analyse/@Model.Id/@myClass.FullName/@line.NumberLine">@line.NumberLine</a></td>
+                    <td><a href="~/Analyse/@Model.Id/@myClass.FullName/@line.NumberLine">@line.Method</a></td>
+                    <td><a href="~/Analyse/@Model.Id/@myClass.FullName/@line.NumberLine"><div class="suspBar"><div class="redBar" style='grid-column-end: @Html.Raw(((line.SuspiciousValue*10)+1).ToString("n0"))'></div></div></a></td>
+                    <td><a class=" align-right" href="~/Analyse/@Model.Id/@myClass.FullName/@line.NumberLine">@line.SuspiciousValue.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture)</a></td>
+                    <td><a class=" align-right" href="~/Analyse/@Model.Id/@myClass.FullName/@line.NumberLine">@line.Cef.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture)</a></td>
+                    <td><a class=" align-right" href="~/Analyse/@Model.Id/@myClass.FullName/@line.NumberLine">@line.Cep.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture)</a></td>
+                    <td><a class=" align-right" href="~/Analyse/@Model.Id/@myClass.FullName/@line.NumberLine">@line.Cnf.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture)</a></td>
+                    <td><a class=" align-right" href="~/Analyse/@Model.Id/@myClass.FullName/@line.NumberLine">@line.Cnp.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture)</a></td>
+                </tr>
+            }
+        
+
+        </table>
+    </article>
+    <div id="pagination"></div>
+</section>
+
+
+@section Scripts{
+    <script src="~/js/table-controls.js" async asp-append-version="true"></script>
+}

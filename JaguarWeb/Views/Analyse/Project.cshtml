@@ -1,0 +1,26 @@
+﻿@model List<JaguarWeb.Clients.AnalysisControlFlowModel>
+@{
+    ViewData["Title"] = $"{Model.FirstOrDefault().ProjectID}";
+     ViewData["Breadcrumbs"] = new List<KeyValuePair<string,string>>(){
+        new KeyValuePair<string, string>($"Home","Projects"),
+        new KeyValuePair<string, string>($"Project/{Model.FirstOrDefault().ProjectID}",Model.FirstOrDefault().ProjectID)
+        }; 
+}
+<h1>Project</h1>
+<h2>ViewData["Title"]</h2>
+<table>
+    <tr>
+        <th>Created Date</th>
+        <th>Failed Tests</th>
+        <th>Total Tests</th>
+    </tr>
+    @foreach (var item in Model)
+    {
+    <tr>
+        <td><a href="~/Analyse/@item.Id">@item.CreatedDate.ToString("MM/dd/yyyy HH:mm") </a></td>
+        <td><a href="~/Analyse/@item.Id">@item.FailedTests </a></td>
+        <td><a href="~/Analyse/@item.Id">@item.TotalTests </a></td>
+    </tr>
+    }
+</table>
+

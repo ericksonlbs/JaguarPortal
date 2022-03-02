@@ -1,0 +1,62 @@
+﻿@model JaguarWeb.Clients.AnalysisControlFlowModel
+@{
+    int line = 1;
+    var myClass = Model.Classes.FirstOrDefault(x=>x.FullName == ViewData["FullName"].ToString());    
+    ViewData["Title"] = $"Code:{myClass.FullName}";
+    ViewData["Breadcrumbs"] = new List<KeyValuePair<string,string>>(){
+        new KeyValuePair<string, string>($"Home","Projects"),
+        new KeyValuePair<string, string>($"Project/{Model.ProjectID}",Model.ProjectID),
+        new KeyValuePair<string, string>($"Analyse/{Model.Id}",Model.CreatedDate.ToString("MM/dd/yyyy HH:mm")),
+        new KeyValuePair<string, string>($"Analyse/{Model.Id}/{myClass.FullName}",myClass.FullName),
+        new KeyValuePair<string, string>($"Analyse/{Model.Id}/{myClass.FullName}/{ViewData["Line"]}",$"Line {ViewData["Line"]}")
+        }; 
+}
+
+<h1>Code</h1>
+<h2>@myClass.FullName</h2>
+
+<aside>
+    <div class="colorSubtitles">
+        <h2>Line Color Heuristic</h2>
+        <p><button class="colorSubtitle suspiciousness-more-than-or-equal-75"></button> line >= 0.75</p>
+        <p><button class="colorSubtitle suspiciousness-more-than-or-equal-50"></button> 0.50 =< line < 0.75</p>
+        <p><button class="colorSubtitle suspiciousness-more-than-or-equal-25"></button> 0.25 =< line < 0.50</p>
+        <p><button class="colorSubtitle suspiciousness-below-25"></button>line < 0.25</p>
+    </div>
+
+</aside>
+<section class="code">
+    <pre>
+        <code class="language-java">
+            <ol class="linenumbers">
+                @foreach (var item in myClass?.Code?.Split("\n"))
+                {
+                    if(myClass.Lines.Any(x=>x.NumberLine == line)){
+                        var lineCode = myClass.Lines.FirstOrDefault(x=>x.NumberLine == line);
+                        var classSuspiciousness = "suspiciousness-below-25";
+                        if(lineCode.SuspiciousValue >= 0.75)
+                            classSuspiciousness = "suspiciousness-more-than-or-equal-75";
+                        else if(lineCode.SuspiciousValue >= 0.50)
+                            classSuspiciousness = "suspiciousness-more-than-or-equal-50";
+                        else if(lineCode.SuspiciousValue >= 0.25)
+                            classSuspiciousness = "suspiciousness-more-than-or-equal-25";
+
+                        <li><span id="line-@lineCode.NumberLine"  class="@classSuspiciousness" aria-label='Suspiciousness of this line is @lineCode.SuspiciousValue.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture)' data-suspiciousness='@lineCode.SuspiciousValue.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture)'><abbr title='Suspiciousness of this line is @lineCode.SuspiciousValue.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture)'>@item</abbr></span></li>
+                    }else{
+                    <li>@item</li>
+                    }
+                    line++;
+                }             
+            </ol>
+        </code>
+    </pre>
+</section>
+
+
+@section Scripts{
+    <script src="~/js/highlight.min.js" asp-append-version="true"></script>
+    <script src="~/js/focus-code-line.js" asp-append-version="true"></script>    
+    <script>hljs.highlightAll();
+        focusCodeLine('@Html.Raw(ViewData["Line"].ToString())')
+    </script>
+}
