@@ -14,8 +14,8 @@ services:
       - db
     build: JaguarWebApi/.
     ports:
-      - "8003:443"
-      - "8004:80"
+      - "8003:8003"
+      - "8004:8004"
     environment:
       MongoDatabaseSettings__ConnectionString: mongodb://root:MongoDB2022!@db:27017/
       ASPNETCORE_URLS: https://+;http://+
