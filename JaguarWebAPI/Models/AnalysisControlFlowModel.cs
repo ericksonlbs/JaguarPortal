@@ -10,8 +10,8 @@ namespace JaguarWebAPI.Models
         public string ProjectID { get; set; }
         public List<ClassAnalyze> Classes { get; set; }
         public string Heuristic{get;set;}
-        public string TotalTests{get;set;}
-        public string FailedTests{get;set;}        
+        public int TotalTests{get;set;}
+        public int FailedTests {get;set;}        
 
     }
     public class AnalysisControlFlowModel: AnalysisControlFlowNewModel

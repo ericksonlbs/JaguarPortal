@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using AutoMapper;
 using JaguarWebAPI.Models;
@@ -18,7 +19,7 @@ namespace JaguarWebAPI.Controllers
         private readonly ILogger<AnalysisControlFlowController> _logger;
         private readonly AnalysisControlFlowService _AnalysisControlFlowServices;
 
-        public AnalysisControlFlowController(ILogger<AnalysisControlFlowController> logger, AnalysisControlFlowService AnalysisControlFlowServices, IMapper mapper) 
+        public AnalysisControlFlowController(ILogger<AnalysisControlFlowController> logger, AnalysisControlFlowService AnalysisControlFlowServices, IMapper mapper)
         {
             _logger = logger;
             _mapper = mapper;
@@ -29,14 +30,17 @@ namespace JaguarWebAPI.Controllers
         public async Task<List<AnalysisControlFlowModel>> Get() =>
             await _AnalysisControlFlowServices.GetAsync();
 
-        [HttpGet("{id:length(24)}")]
+        [HttpGet("{id:length(24)}")]        
+        [ProducesResponseType(((int)HttpStatusCode.NotFound), Type = typeof(ErrorsModel))]
+        [ProducesResponseType(((int)HttpStatusCode.OK), Type = typeof(AnalysisControlFlowModel))]
         public async Task<ActionResult<AnalysisControlFlowModel>> Get(string id)
         {
+
             var AnalysisControlFlowModel = await _AnalysisControlFlowServices.GetAsync(id);
 
             if (AnalysisControlFlowModel is null)
             {
-                return NotFound();
+                return NotFound(ErrorsUtil.CreateErrorsModel(0, "Object NotFound"));
             }
 
             return AnalysisControlFlowModel;
@@ -47,7 +51,7 @@ namespace JaguarWebAPI.Controllers
         {
             var analysisControlFlowModel = _mapper.Map<AnalysisControlFlowModel>(newAnalysisControlFlowModel);
             analysisControlFlowModel.CreatedDate = DateTime.UtcNow;
-            
+
             await _AnalysisControlFlowServices.CreateAsync(analysisControlFlowModel);
 
             return CreatedAtAction(nameof(Get), new { id = analysisControlFlowModel.Id }, analysisControlFlowModel);

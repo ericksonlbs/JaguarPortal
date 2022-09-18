@@ -1,62 +1,187 @@
 ﻿@model JaguarWeb.Clients.AnalysisControlFlowModel
 @{
     int line = 1;
-    var myClass = Model.Classes.FirstOrDefault(x=>x.FullName == ViewData["FullName"].ToString());    
+    var myClass = Model.Classes.FirstOrDefault(x => x.FullName == ViewData["FullName"].ToString());
     ViewData["Title"] = $"Code:{myClass.FullName}";
-    ViewData["Breadcrumbs"] = new List<KeyValuePair<string,string>>(){
+    ViewData["Breadcrumbs"] = new List<KeyValuePair<string, string>>(){
         new KeyValuePair<string, string>($"Home","Projects"),
         new KeyValuePair<string, string>($"Project/{Model.ProjectID}",Model.ProjectID),
         new KeyValuePair<string, string>($"Analyse/{Model.Id}",Model.CreatedDate.ToString("MM/dd/yyyy HH:mm")),
         new KeyValuePair<string, string>($"Analyse/{Model.Id}/{myClass.FullName}",myClass.FullName),
         new KeyValuePair<string, string>($"Analyse/{Model.Id}/{myClass.FullName}/{ViewData["Line"]}",$"Line {ViewData["Line"]}")
-        }; 
+        };
 }
 
-<h1>Code</h1>
-<h2>@myClass.FullName</h2>
 
-<aside>
-    <div class="colorSubtitles">
-        <h2>Line Color Heuristic</h2>
-        <p><button class="colorSubtitle suspiciousness-more-than-or-equal-75"></button> line >= 0.75</p>
-        <p><button class="colorSubtitle suspiciousness-more-than-or-equal-50"></button> 0.50 =< line < 0.75</p>
-        <p><button class="colorSubtitle suspiciousness-more-than-or-equal-25"></button> 0.25 =< line < 0.50</p>
-        <p><button class="colorSubtitle suspiciousness-below-25"></button>line < 0.25</p>
+<div class="row">
+
+    <div class="col-xl-6 col-md-6 mb-4">
+        <div class="card border-left-warning shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                            Class
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">@myClass.FullName</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-file-code fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
-</aside>
-<section class="code">
-    <pre>
-        <code class="language-java">
-            <ol class="linenumbers">
-                @foreach (var item in myClass?.Code?.Split("\n"))
-                {
-                    if(myClass.Lines.Any(x=>x.NumberLine == line)){
-                        var lineCode = myClass.Lines.FirstOrDefault(x=>x.NumberLine == line);
-                        var classSuspiciousness = "suspiciousness-below-25";
-                        if(lineCode.SuspiciousValue >= 0.75)
-                            classSuspiciousness = "suspiciousness-more-than-or-equal-75";
-                        else if(lineCode.SuspiciousValue >= 0.50)
-                            classSuspiciousness = "suspiciousness-more-than-or-equal-50";
-                        else if(lineCode.SuspiciousValue >= 0.25)
-                            classSuspiciousness = "suspiciousness-more-than-or-equal-25";
+    <div class="col-xl-2 col-md-6 mb-4">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                            Heuristic
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.Heuristic</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-calculator fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-                        <li><span id="line-@lineCode.NumberLine"  class="@classSuspiciousness" aria-label='Suspiciousness of this line is @lineCode.SuspiciousValue.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture)' data-suspiciousness='@lineCode.SuspiciousValue.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture)'><abbr title='Suspiciousness of this line is @lineCode.SuspiciousValue.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture)'>@item</abbr></span></li>
-                    }else{
-                    <li>@item</li>
-                    }
-                    line++;
-                }             
-            </ol>
-        </code>
-    </pre>
-</section>
+    <div class="col-xl-2 col-md-6 mb-4">
+        <div class="card border-left-info shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                            Requirement Type
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">Line</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-laptop-code fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
+    <div class="col-xl-2 col-md-6 mb-4">
+        <div class="card border-left-danger shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                            Failed Tests
+                        </div>
+                        <div class="row no-gutters align-items-center">
+                            <div class="col-auto">
+                                <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">@Model.FailedTests.ToString()/@Model.TotalTests.ToString()</div>
+                            </div>
+                            <div class="col">
+                                <div class="progress progress-sm mr-2">
+                                    <div class="progress-bar bg-danger" role="progressbar" style="width: @Html.Raw(Convert.ToInt32((Model.FailedTests*100)/Model.TotalTests))%" aria-valuenow="@Html.Raw(Model.FailedTests)" aria-valuemin="0" aria-valuemax="@Html.Raw(Model.TotalTests)"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-flask fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="col-lg-12">
+
+    <!-- Default Card Example -->
+    <div class="card mb-4">
+        <div class="card-header">
+            Legend: Line Color Heuristic
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-lg-3">
+                    <div class="card suspiciousness-more-than-or-equal-75 text-white shadow">
+                        <div class="card-body p-1">
+                            line >= 0.75
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3">
+                    <div class="card suspiciousness-more-than-or-equal-50 text-white shadow">
+                        <div class="card-body p-1">
+                            0.50 =< line < 0.75
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3">
+                    <div class="card suspiciousness-more-than-or-equal-25 text-white shadow">
+                        <div class="card-body p-1">
+                            0.25 =< line < 0.50
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3">
+                    <div class="card suspiciousness-below-25 text-white shadow">
+                        <div class="card-body p-1">
+                            line < 0.25
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="col-lg-12">
+
+    <!-- Default Card Example -->
+    <div class="card mb-4">
+        <div class="card-header">
+            Code of class
+        </div>
+        <div class="card-body p-0">
+            <div class="code">
+                <pre class="mb-0"><code class="language-java"><ol class="linenumbers">
+                            @foreach (var item in myClass?.Code?.Split("\n"))
+                            {
+                                if (myClass.Lines.Any(x => x.NumberLine == line))
+                                {
+                                    var lineCode = myClass.Lines.FirstOrDefault(x => x.NumberLine == line);
+                                    var classSuspiciousness = "suspiciousness-below-25";
+                                    if (lineCode.SuspiciousValue >= 0.75)
+                                        classSuspiciousness = "suspiciousness-more-than-or-equal-75";
+                                    else if (lineCode.SuspiciousValue >= 0.50)
+                                        classSuspiciousness = "suspiciousness-more-than-or-equal-50";
+                                    else if (lineCode.SuspiciousValue >= 0.25)
+                                        classSuspiciousness = "suspiciousness-more-than-or-equal-25";
+
+                        <li><span id="line-@lineCode.NumberLine" class="@classSuspiciousness" aria-label='Suspiciousness of this line is @lineCode.SuspiciousValue.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture)' data-suspiciousness='@lineCode.SuspiciousValue.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture)'><abbr title='Suspiciousness of this line is @lineCode.SuspiciousValue.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture)'>@item</abbr></span></li>
+                                }
+                                else
+                                {
+                                    <li>@item</li>
+                                }
+                                line++;
+                            }</ol></code></pre>
+            </div>
+        </div>
+    </div>
+</div>
 
 @section Scripts{
     <script src="~/js/highlight.min.js" asp-append-version="true"></script>
-    <script src="~/js/focus-code-line.js" asp-append-version="true"></script>    
-    <script>hljs.highlightAll();
+    <script src="~/js/focus-code-line.js" asp-append-version="true"></script>
+    <script>
+        hljs.highlightAll();
         focusCodeLine('@Html.Raw(ViewData["Line"].ToString())')
     </script>
-}
+    }

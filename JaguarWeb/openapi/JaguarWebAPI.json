@@ -254,12 +254,12 @@
             "nullable": true
           },
           "totalTests": {
-            "type": "string",
-            "nullable": true
+            "type": "integer",
+            "format": "int32"
           },
           "failedTests": {
-            "type": "string",
-            "nullable": true
+            "type": "integer",
+            "format": "int32"
           },
           "id": {
             "type": "string",
@@ -291,12 +291,12 @@
             "nullable": true
           },
           "totalTests": {
-            "type": "string",
-            "nullable": true
+            "type": "integer",
+            "format": "int32"
           },
           "failedTests": {
-            "type": "string",
-            "nullable": true
+            "type": "integer",
+            "format": "int32"
           }
         },
         "additionalProperties": false

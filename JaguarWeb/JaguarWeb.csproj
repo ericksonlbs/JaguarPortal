@@ -1,9 +1,15 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <UserSecretsId>31ba4350-872f-4729-acc1-e2b6fb58a625</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
   </PropertyGroup>
+  <ItemGroup>
+    <None Include="wwwroot\js\focus-code-line.js" />
+    <None Include="wwwroot\js\highlight.min.js" />
+    <None Include="wwwroot\js\site.js" />
+    <None Include="wwwroot\js\table-controls.js" />
+  </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.11.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />

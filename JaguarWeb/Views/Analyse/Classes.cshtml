@@ -1,106 +1,186 @@
 ﻿@model JaguarWeb.Clients.AnalysisControlFlowModel
 @{
-    JaguarWeb.Clients.ClassAnalyze myClass = Model.Classes.FirstOrDefault(x=>x.FullName == ViewData["FullName"].ToString());
+    JaguarWeb.Clients.ClassAnalyze myClass = Model.Classes.FirstOrDefault(x => x.FullName == ViewData["FullName"].ToString());
     ViewData["Title"] = $"{myClass.FullName}";
-    ViewData["Breadcrumbs"] = new List<KeyValuePair<string,string>>(){
+    ViewData["Breadcrumbs"] = new List<KeyValuePair<string, string>>(){
           new KeyValuePair<string, string>($"Home","Projects"),
         new KeyValuePair<string, string>($"Project/{Model.ProjectID}",Model.ProjectID),
         new KeyValuePair<string, string>($"Analyse/{Model.Id}",Model.CreatedDate.ToString("MM/dd/yyyy HH:mm")),
         new KeyValuePair<string, string>($"Analyse/{Model.Id}/{myClass.FullName}",myClass.FullName),
-        }; 
+        };
 }
 
+<div class="row">
 
-<h1>Class</h1>
-<h2>@myClass.FullName</h2>
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-warning shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                            Class
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">@myClass.FullName</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-file-code fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-<section class="executionConfigs">
-    <p><em>Heuristic: </em>@Model.Heuristic</p>
-    <p><em>Requirement Type: </em>LINE</p>
-    <p><em>Tests: </em>
-        @Model.FailedTests.ToString() failed out of @Model.TotalTests.ToString()
-    </p>
-</section>
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                            Heuristic
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.Heuristic</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-calculator fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-<section class="testRequirements">
-    <h3 class="subTitle">Line Color Susp</h3>
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-info shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                            Requirement Type
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">Line</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-laptop-code fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    <article class="tableControls">
-        <p>
-            Suspiciouness Filter:
-            <input type="range" min="0.0" max="1.0" step="0.1" value="1.0" id="susRange" list="tickmarks">
-            <datalist id="tickmarks">
-                <option value="0.0"></option>
-                <option value="0.1"></option>
-                <option value="0.2"></option>
-                <option value="0.3"></option>
-                <option value="0.4"></option>
-                <option value="0.5"></option>
-                <option value="0.6"></option>
-                <option value="0.7"></option>
-                <option value="0.8"></option>
-                <option value="0.9"></option>
-                <option value="1.0"></option>
-            </datalist>
-
-            <span id="rangeText"></span>
-
-        </p>
-        <p>
-            <label for="itensPerTable">Itens per table: </label>
-            <select name="itensPerTable" id="itensPerTable">
-                <option value="10" selected>10</option>
-                <option value="20">20</option>
-                <option value="30">30</option>
-                <option value="40">40</option>
-                <option value="all">All</option>
-            </select>
-        </p>
-    </article>
-
-    <article id="tableContainer">
-        <table id="dataTable">
-            <tr>
-                <th class="align-center"><abbr title="line">Line</abbr> </th>
-                <th class="align-center"><abbr title="method">Method Signature</abbr> </th>                
-                <th>Bar</th>
-                <th class="align-center" id="suspColumn"><abbr title="suspiciousness">Susp.</abbr> </th>
-                <th class="align-center">
-                    <abbr title="the number of failed test cases that executed the component">C.E.F</abbr>
-                </th>
-                <th class="align-center" >
-                    <abbr title="the number of passed test cases that executed the component">C.E.P</abbr>
-                </th>
-                <th class="align-center" >
-                    <abbr title="the number of failed test cases that did not execute the component">C.N.F</abbr>
-                </th>
-                <th class="align-center" >
-                    <abbr title="the number of passed test cases that did not execute the component">C.N.P</abbr>
-                </th>
-            </tr>
-
-     
-            @foreach (var line in myClass.Lines)
-            {                
-                <tr>
-                    <td><a href="~/Analyse/@Model.Id/@myClass.FullName/@line.NumberLine">@line.NumberLine</a></td>
-                    <td><a href="~/Analyse/@Model.Id/@myClass.FullName/@line.NumberLine">@line.Method</a></td>
-                    <td><a href="~/Analyse/@Model.Id/@myClass.FullName/@line.NumberLine"><div class="suspBar"><div class="redBar" style='grid-column-end: @Html.Raw(((line.SuspiciousValue*10)+1).ToString("n0"))'></div></div></a></td>
-                    <td><a class=" align-right" href="~/Analyse/@Model.Id/@myClass.FullName/@line.NumberLine">@line.SuspiciousValue.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture)</a></td>
-                    <td><a class=" align-right" href="~/Analyse/@Model.Id/@myClass.FullName/@line.NumberLine">@line.Cef.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture)</a></td>
-                    <td><a class=" align-right" href="~/Analyse/@Model.Id/@myClass.FullName/@line.NumberLine">@line.Cep.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture)</a></td>
-                    <td><a class=" align-right" href="~/Analyse/@Model.Id/@myClass.FullName/@line.NumberLine">@line.Cnf.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture)</a></td>
-                    <td><a class=" align-right" href="~/Analyse/@Model.Id/@myClass.FullName/@line.NumberLine">@line.Cnp.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture)</a></td>
-                </tr>
-            }
-        
-
-        </table>
-    </article>
-    <div id="pagination"></div>
-</section>
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-danger shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                            Failed Tests
+                        </div>
+                        <div class="row no-gutters align-items-center">
+                            <div class="col-auto">
+                                <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">@Model.FailedTests.ToString()/@Model.TotalTests.ToString()</div>
+                            </div>
+                            <div class="col">
+                                <div class="progress progress-sm mr-2">
+                                    <div class="progress-bar bg-danger" role="progressbar" style="width: @Html.Raw(Convert.ToInt32((Model.FailedTests*100)/Model.TotalTests))%" aria-valuenow="@Html.Raw(Model.FailedTests)" aria-valuemin="0" aria-valuemax="@Html.Raw(Model.TotalTests)"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-flask fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 
-@section Scripts{
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">List Suspiciouness by method on class "@myClass.FullName"</h6>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-sm-12 pl-4">
+                Suspiciouness Filter:
+                <input type="range" min="0.0" max="1.0" step="0.1" value="1.0" id="susRange" class="custom-range" style="width:150px" list="tickmarks">
+                <datalist id="tickmarks">
+                    <option value="0.0"></option>
+                    <option value="0.1"></option>
+                    <option value="0.2"></option>
+                    <option value="0.3"></option>
+                    <option value="0.4"></option>
+                    <option value="0.5"></option>
+                    <option value="0.6"></option>
+                    <option value="0.7"></option>
+                    <option value="0.8"></option>
+                    <option value="0.9"></option>
+                    <option value="1.0"></option>
+                </datalist>
+
+                <span id="rangeText"></span>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <div id="dataTable_wrapper" class="dataTables_wrapper dt-bootstrap4">
+                <div class="col-sm-12">
+                    <table class="table table-bordered table-striped dataTable" id="dataTable" width="100%" cellspacing="0" role="grid" aria-describedby="dataTable_info" style="width: 100%;">
+                        <thead>
+                            <tr>                              
+                                <th><abbr title="Line of code">Line</abbr> </th>
+                                <th><abbr title="Method Signature">Method</abbr> </th>
+                                <th>Bar</th>
+                                <th><abbr title="Suspiciousness">Susp.</abbr> </th>
+                                <th>
+                                    <abbr title="The number of failed test cases that executed the component">C.E.F</abbr>
+                                </th>
+                                <th>
+                                    <abbr title="The number of passed test cases that executed the component">C.E.P</abbr>
+                                </th>
+                                <th>
+                                    <abbr title="The number of failed test cases that did not execute the component">C.N.F</abbr>
+                                </th>
+                                <th>
+                                    <abbr title="The number of passed test cases that did not execute the component">C.N.P</abbr>
+                                </th>
+                            </tr>
+
+                        </thead>
+                        <tbody>
+                            @foreach (var line in myClass.Lines.OrderByDescending(x=>x.SuspiciousValue))
+                            {
+                                <tr>
+                                    <td><a href="~/Analyse/@Model.Id/@myClass.FullName/@line.NumberLine">@line.NumberLine</a></td>
+                                    <td><a href="~/Analyse/@Model.Id/@myClass.FullName/@line.NumberLine">@line.Method</a></td>
+                                    <td>
+                                        <div class="progress progress-sm mr-2">
+                                            <div class="progress-bar bg-danger" role="progressbar" style="width: @Html.Raw(((line.SuspiciousValue*100)+1).ToString("n0"))%" aria-valuenow="@Html.Raw(((line.SuspiciousValue*100)+1).ToString("n0"))" aria-valuemin="0" aria-valuemax="100"></div> <div class="d-none">@line.SuspiciousValue.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture)</div>
+                                        </div>
+                                    </td>
+                                    <td><a class=" align-right" href="~/Analyse/@Model.Id/@myClass.FullName/@line.NumberLine">@line.SuspiciousValue.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture)</a></td>
+                                    <td><a class=" align-right" href="~/Analyse/@Model.Id/@myClass.FullName/@line.NumberLine">@line.Cef.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture)</a></td>
+                                    <td><a class=" align-right" href="~/Analyse/@Model.Id/@myClass.FullName/@line.NumberLine">@line.Cep.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture)</a></td>
+                                    <td><a class=" align-right" href="~/Analyse/@Model.Id/@myClass.FullName/@line.NumberLine">@line.Cnf.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture)</a></td>
+                                    <td><a class=" align-right" href="~/Analyse/@Model.Id/@myClass.FullName/@line.NumberLine">@line.Cnp.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture)</a></td>
+                                </tr>
+                            }                            
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+@*@section Scripts{
     <script src="~/js/table-controls.js" async asp-append-version="true"></script>
 }
+*@
+
+@section scripts {
+    <script src="~/js/demo/datatables-demo.js" asp-append-version="true"></script>
+                    }
+
