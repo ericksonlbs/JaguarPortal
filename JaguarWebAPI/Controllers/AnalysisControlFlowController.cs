@@ -4,8 +4,10 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using AutoMapper;
+using JaguarWebAPI.Infrastructure;
 using JaguarWebAPI.Models;
 using JaguarWebAPI.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -13,6 +15,7 @@ namespace JaguarWebAPI.Controllers
 {
     [ApiController]
     [Route("[controller]")]
+    [ApiKey]
     public class AnalysisControlFlowController : ControllerBase
     {
         private readonly IMapper _mapper;
@@ -48,7 +51,7 @@ namespace JaguarWebAPI.Controllers
 
         [HttpPost]
         public async Task<IActionResult> Post(AnalysisControlFlowNewModel newAnalysisControlFlowModel)
-        {
+        {            
             var analysisControlFlowModel = _mapper.Map<AnalysisControlFlowModel>(newAnalysisControlFlowModel);
             analysisControlFlowModel.CreatedDate = DateTime.UtcNow;
 

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -31,13 +32,15 @@ namespace JaguarWebAPI
         {
             //Configuration Database Mongo
             services.Configure<MongoDatabaseSettings>(Configuration.GetSection("MongoDatabaseSettings"));
+            
+            ApiKeyAttribute.ApiKey = Configuration.GetSection("Security:APIKey").Value;
 
-             // Auto Mapper Configurations
+            // Auto Mapper Configurations
             IMapper mapper = new MapperConfiguration(mc =>
             {
                 mc.AddProfile(new MappingProfile());
             }).CreateMapper();
-            
+
             services.AddSingleton(mapper);
             services.AddSingleton<AnalysisControlFlowService>();
 
@@ -46,6 +49,7 @@ namespace JaguarWebAPI
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "JaguarWebAPI", Version = "v1" });
             });
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -55,7 +59,7 @@ namespace JaguarWebAPI
             {
                 app.UseDeveloperExceptionPage();
             }
-            
+
             app.UseSwagger();
             app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "JaguarWebAPI v1"));
 
@@ -63,6 +67,7 @@ namespace JaguarWebAPI
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
