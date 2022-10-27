@@ -27,16 +27,8 @@ namespace JaguarWeb
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
-            
-            services.AddHttpClient<JaguarWebAPIService>().ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
-            {
-                ClientCertificateOptions = ClientCertificateOption.Manual,
-                ServerCertificateCustomValidationCallback =
-                (httpRequestMessage, cert, cetChain, policyErrors) =>
-                {
-                    return true;
-                }
-            });
+            services.AddHttpClient();
+            services.AddSingleton<JaguarWebAPIService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
