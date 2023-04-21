@@ -1,0 +1,55 @@
+﻿@model JaguarPortal.Web.Models.Account.RegisterVM
+@{
+    ViewData["Title"] = "Register";
+    Layout = "_LayoutLight";
+}
+
+
+@section Styles{
+    <link href="~/css/login.css" rel="stylesheet" asp-append-version="true" />
+}
+    <section class="vh-100" style="background-color: #508bfc;">
+        <div class="container py-5 h-100">
+            <div class="row d-flex justify-content-center align-items-center h-100">
+                <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+                    <div class="card shadow-2-strong" style="border-radius: 1rem;">
+                        <div class="card-body p-5">
+
+                            <h3 class="mb-5 text-center">Register</h3>
+                            <form asp-action="Register" method="post">
+                                <div class="form-outline mb-4">
+                                    <label class="form-label" asp-for="Name">Name</label>
+                                    <input required type="text" asp-for="Name" class="form-control form-control-lg" />
+                                </div>
+
+                                <div class="form-outline mb-4">
+                                    <label class="form-label" asp-for="Email">E-mail</label>
+                                    <input required type="email" asp-for="Email" class="form-control form-control-lg" />
+                                </div>
+
+                                <div class="form-outline mb-4">
+                                    <label class="form-label" asp-for="Login">Login</label>
+                                    <input required type="text" asp-for="Login" class="form-control form-control-lg" />
+                                </div>
+
+                                <div class="form-outline mb-4">
+                                    <label class="form-label" asp-for="Password">Password</label>
+                                    <input required type="password" asp-for="Password" class="form-control form-control-lg" />
+                                </div>
+
+                                <div class="form-outline mb-4">
+                                    <label class="form-label" asp-for="ConfirmPassword">Confirm Password</label>
+                                    <input type="password" asp-for="ConfirmPassword" class="form-control form-control-lg" />
+                                </div>
+
+                                <div asp-validation-summary="All" class="text-danger"></div>
+
+                                <button class="btn btn-primary btn-lg btn-block" type="submit">Register</button>
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
